@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoCAD Commands & Shortcuts - Interactive 3D Cheat Sheet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #0066ff;
+            --secondary-color: #ff6b6b;
+            --accent-color: #4ecdc4;
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.21);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow-color: rgba(0, 102, 255, 0.579);
+            --transition-speed: 0.3s;
+        }
+
+        body.light-mode {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #0c0000;
+            --card-bg: rgba(0, 0, 0, 0.036);
+            --border-color: rgba(0, 0, 0, 0.1);
+            --shadow-color: rgba(0, 102, 255, 0.3);
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: all var(--transition-speed) ease;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.7;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, var(--bg-primary) 0%, transparent 100%);
+            padding: 20px;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 2em;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px var(--primary-color)); }
+            to { filter: drop-shadow(0 0 20px var(--accent-color)); }
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+            max-width: 400px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 30px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            font-size: 16px;
+            transition: all var(--transition-speed) ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 20px var(--shadow-color);
+            transform: scale(1.02);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .btn:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.5);
+        }
+
+        .btn:hover:before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .theme-toggle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .sound-toggle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 100px auto 50px;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .category-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border-color: transparent;
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px var(--shadow-color);
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--shadow-color);
+        }
+
+        .commands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .command-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 25px;
+            transition: all var(--transition-speed) ease;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            animation: cardEntry 0.6s ease-out;
+        }
+
+        @keyframes cardEntry {
+            from {
+                opacity: 0;
+                transform: rotateX(-30deg) translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: rotateX(0) translateY(0);
+            }
+        }
+
+        .command-card:before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, var(--primary-color), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+            opacity: 0;
+        }
+
+        .command-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 0 20px 40px var(--shadow-color);
+            border-color: var(--primary-color);
+        }
+
+        .command-card:hover:before {
+            animation: shine 0.5s ease-in-out;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        .command-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+
+        /* VIP */
+        .command-name {
+            font-size: 1.4em;
+            /* font-family: 'Times New Roman', Times, serif; */
+            font-weight: bold;
+            /* color: #00FF88; */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
+            background: linear-gradient(135deg, #ab2740, #bd3876, #ad4b42);
+            border-radius: 20px;
+            padding: 5px 15px;
+            color: white;
+        }
+
+
+        .command-shortcut {
+            background: linear-gradient(135deg, #ab2740, #bd3876, #ad4b42);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
+        }
+
+        .command-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .command-category {
+            display: inline-block;
+            background: var(--border-color);
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            margin-top: 10px;
+        }
+
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            animation: rotate 2s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loader:before,
+        .loader:after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .loader:before {
+            width: 100%;
+            height: 100%;
+            border: 5px solid transparent;
+            border-top-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+
+        .loader:after {
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            border: 5px solid transparent;
+            border-bottom-color: var(--accent-color);
+            animation: spin 1s linear infinite reverse;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-secondary);
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -40%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-title {
+            font-size: 2em;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            font-size: 24px;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .modal-section {
+            margin-bottom: 25px;
+        }
+
+        .modal-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .example-code {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+
+        .floating-menu {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .floating-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            box-shadow: 0 5px 20px var(--shadow-color);
+            transition: all var(--transition-speed) ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        .floating-btn:active {
+            transform: scale(0.95);
+        }
+
+        .tooltip {
+            position: absolute;
+            right: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 10px 15px;
+            border-radius: 10px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .floating-btn:hover .tooltip {
+            opacity: 1;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-container {
+                max-width: 100%;
+            }
+
+            .controls {
+                justify-content: center;
+            }
+
+            .commands-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .category-filters {
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 10px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .modal-content {
+                padding: 25px;
+                margin: 20px;
+            }
+
+            .floating-menu {
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .floating-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.5em;
+            }
+
+            .main-container {
+                padding: 10px;
+            }
+
+            .command-card {
+                padding: 20px;
+            }
+
+            .command-name {
+                font-size: 1.2em;
+            }
+        }
+
+        /* Particle effect styles */
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 9999;
+        }
+
+        @keyframes particle-animation {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0);
+            }
+        }
+
+        /* Scroll animations */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary-color), var(--accent-color));
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+
+        /* Responsive touch gestures */
+        @media (hover: none) and (pointer: coarse) {
+            .command-card:active {
+                transform: scale(0.98);
+            }
+            
+            .btn:active,
+            .filter-btn:active {
+                transform: scale(0.95);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader"></div>
+    </div>
+
+    <!-- 3D Canvas Container -->
+    <div id="canvas-container"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">AutoCAD Master</div>
+            <p class="logo" style="font-size: small;">Created By Kyaw Myo Naing <br>Ph - 09787198239 </p>
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search commands...">
+            </div>
+            <div class="controls">
+                <button class="btn theme-toggle" id="themeToggle" title="Toggle Theme">🌙</button>
+                <button class="btn sound-toggle" id="soundToggle" title="Toggle Sound">🔊</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Statistics -->
+        <div class="stats-container" id="statsContainer">
+            <div class="stat-card">
+                <div class="stat-number" id="totalCommands">150+</div>
+                <div class="stat-label">Commands</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">12</div>
+                <div class="stat-label">Categories</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">Shortcuts</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Possibilities</div>
+            </div>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="category-filters" id="categoryFilters">
+            <button class="filter-btn active" data-category="all">All Commands</button>
+            <button class="filter-btn" data-category="drawing">Drawing</button>
+            <button class="filter-btn" data-category="modify">Modify</button>
+            <button class="filter-btn" data-category="annotation">Annotation</button>
+            <button class="filter-btn" data-category="3d">3D Modeling</button>
+            <button class="filter-btn" data-category="view">View</button>
+            <button class="filter-btn" data-category="dimension">Dimension</button>
+            <button class="filter-btn" data-category="layer">Layer</button>
+            <button class="filter-btn" data-category="block">Block</button>
+            <button class="filter-btn" data-category="utility">Utility</button>
+        </div>
+
+        <!-- Commands Grid -->
+        <div class="commands-grid" id="commandsGrid"></div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="commandModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Command Details</h2>
+                <button class="modal-close" id="modalClose">×</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Floating Menu -->
+    <div class="floating-menu">
+        <button class="floating-btn" id="scrollTop">
+            ↑
+            <span class="tooltip">Back to Top</span>
+        </button>
+        <button class="floating-btn" id="helpBtn">
+            ?
+            <span class="tooltip">Help</span>
+        </button>
+    </div>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <script>
+        // AutoCAD Commands Database
+        const commands = [
+            // Drawing Commands
+            { name: 'LINE', shortcut: 'L', description: 'Creates straight line segments', category: 'drawing', details: 'The LINE command creates a series of contiguous line segments. Each segment is a line object that can be edited separately.', usage: 'LINE [start point] [end point]' },
+            { name: 'CIRCLE', shortcut: 'C', description: 'Creates a circle', category: 'drawing', details: 'Creates a circle using a center point and radius, diameter, or other methods.', usage: 'CIRCLE [center] [radius]' },
+            { name: 'ARC', shortcut: 'A', description: 'Creates an arc', category: 'drawing', details: 'Creates an arc based on three points, center point, or other methods.', usage: 'ARC [start] [center] [end]' },
+            { name: 'RECTANGLE', shortcut: 'REC', description: 'Creates a rectangular polyline', category: 'drawing', details: 'Creates a rectangular polyline from two corner points or dimensions.', usage: 'RECTANGLE [corner1] [corner2]' },
+            { name: 'POLYGON', shortcut: 'POL', description: 'Creates an equilateral closed polyline', category: 'drawing', details: 'Creates a regular polygon with a specified number of sides.', usage: 'POLYGON [sides] [center] [radius]' },
+            { name: 'ELLIPSE', shortcut: 'EL', description: 'Creates an ellipse or elliptical arc', category: 'drawing', details: 'Creates an ellipse using center point and axis endpoints.', usage: 'ELLIPSE [center] [axis1] [axis2]' },
+            { name: 'POLYLINE', shortcut: 'PL', description: 'Creates 2D polyline', category: 'drawing', details: 'Creates a connected sequence of line and arc segments as a single object.', usage: 'POLYLINE [points...]' },
+            { name: 'SPLINE', shortcut: 'SPL', description: 'Creates smooth curve', category: 'drawing', details: 'Creates a smooth curve that passes through or near specified points.', usage: 'SPLINE [points...]' },
+            { name: 'HATCH', shortcut: 'H', description: 'Fills an area with a pattern', category: 'drawing', details: 'Fills an enclosed area or selected objects with a hatch pattern, solid fill, or gradient fill.', usage: 'HATCH [pattern] [boundary]' },
+            { name: 'POINT', shortcut: 'PO', description: 'Creates a point object', category: 'drawing', details: 'Creates a point object at specified coordinates.', usage: 'POINT [location]' },
+
+            // Modify Commands
+            { name: 'MOVE', shortcut: 'M', description: 'Moves objects', category: 'modify', details: 'Moves objects a specified distance in a specified direction.', usage: 'MOVE [select] [base point] [destination]' },
+            { name: 'COPY', shortcut: 'CO', description: 'Copies objects', category: 'modify', details: 'Creates duplicates of objects at specified locations.', usage: 'COPY [select] [base point] [destination]' },
+            { name: 'ROTATE', shortcut: 'RO', description: 'Rotates objects around a base point', category: 'modify', details: 'Rotates objects around a specified base point.', usage: 'ROTATE [select] [base point] [angle]' },
+            { name: 'SCALE', shortcut: 'SC', description: 'Resizes objects', category: 'modify', details: 'Enlarges or reduces objects proportionally in X, Y, and Z directions.', usage: 'SCALE [select] [base point] [scale factor]' },
+            { name: 'TRIM', shortcut: 'TR', description: 'Trims objects', category: 'modify', details: 'Trims objects to meet the edges of other objects.', usage: 'TRIM [cutting edges] [objects to trim]' },
+            { name: 'EXTEND', shortcut: 'EX', description: 'Extends objects', category: 'modify', details: 'Extends objects to meet the edges of other objects.', usage: 'EXTEND [boundary edges] [objects to extend]' },
+            { name: 'OFFSET', shortcut: 'O', description: 'Creates parallel copies', category: 'modify', details: 'Creates concentric circles, parallel lines, and parallel curves.', usage: 'OFFSET [distance] [select object] [side]' },
+            { name: 'MIRROR', shortcut: 'MI', description: 'Creates mirrored copies', category: 'modify', details: 'Creates a mirrored copy of selected objects.', usage: 'MIRROR [select] [mirror line]' },
+            { name: 'ARRAY', shortcut: 'AR', description: 'Creates copies in pattern', category: 'modify', details: 'Creates copies of objects arranged in a pattern.', usage: 'ARRAY [type] [select] [parameters]' },
+            { name: 'STRETCH', shortcut: 'S', description: 'Stretches objects', category: 'modify', details: 'Stretches objects crossed by a selection window.', usage: 'STRETCH [select] [base point] [destination]' },
+            { name: 'FILLET', shortcut: 'F', description: 'Rounds object corners', category: 'modify', details: 'Rounds and fillets the edges of objects.', usage: 'FILLET [radius] [object1] [object2]' },
+            { name: 'CHAMFER', shortcut: 'CHA', description: 'Bevels object corners', category: 'modify', details: 'Bevels the edges of objects.', usage: 'CHAMFER [distance] [object1] [object2]' },
+            { name: 'BREAK', shortcut: 'BR', description: 'Breaks object into parts', category: 'modify', details: 'Breaks the selected object between two points.', usage: 'BREAK [select] [first point] [second point]' },
+            { name: 'JOIN', shortcut: 'J', description: 'Joins similar objects', category: 'modify', details: 'Joins similar objects to form a single, unbroken object.', usage: 'JOIN [select objects]' },
+            { name: 'EXPLODE', shortcut: 'X', description: 'Breaks compound objects', category: 'modify', details: 'Breaks a compound object into its component objects.', usage: 'EXPLODE [select]' },
+
+            // Annotation Commands
+            { name: 'TEXT', shortcut: 'DT', description: 'Creates single-line text', category: 'annotation', details: 'Creates a single-line text object.', usage: 'TEXT [insertion point] [height] [rotation] [text]' },
+            { name: 'MTEXT', shortcut: 'MT', description: 'Creates multiline text', category: 'annotation', details: 'Creates a multiline text object with more formatting options.', usage: 'MTEXT [first corner] [opposite corner]' },
+            { name: 'LEADER', shortcut: 'LE', description: 'Creates a leader line', category: 'annotation', details: 'Creates a line that connects annotation to a feature.', usage: 'LEADER [start point] [next points] [annotation]' },
+            { name: 'TABLE', shortcut: 'TB', description: 'Creates a table', category: 'annotation', details: 'Creates an empty table object.', usage: 'TABLE [insertion point] [rows] [columns]' },
+            { name: 'MULTILEADER', shortcut: 'MLD', description: 'Creates a multileader', category: 'annotation', details: 'Creates a multileader object.', usage: 'MULTILEADER [leader points] [text]' },
+
+            // 3D Commands
+            { name: 'EXTRUDE', shortcut: 'EXT', description: 'Creates 3D solid by extruding', category: '3d', details: 'Creates a 3D solid from an object that encloses an area.', usage: 'EXTRUDE [select] [height]' },
+            { name: 'REVOLVE', shortcut: 'REV', description: 'Creates 3D solid by revolving', category: '3d', details: 'Creates a 3D solid by revolving a 2D object around an axis.', usage: 'REVOLVE [select] [axis]' },
+            { name: 'LOFT', shortcut: 'LOFT', description: 'Creates 3D solid through profiles', category: '3d', details: 'Creates a 3D solid or surface by lofting through cross sections.', usage: 'LOFT [cross sections]' },
+            { name: 'SWEEP', shortcut: 'SWEEP', description: 'Creates 3D solid along path', category: '3d', details: 'Creates a 3D solid by sweeping a 2D profile along a path.', usage: 'SWEEP [profile] [path]' },
+            { name: 'UNION', shortcut: 'UNI', description: 'Combines 3D solids', category: '3d', details: 'Combines selected 3D solids into a single solid.', usage: 'UNION [select solids]' },
+            { name: 'SUBTRACT', shortcut: 'SU', description: 'Subtracts 3D solids', category: '3d', details: 'Combines selected 3D solids by subtraction.', usage: 'SUBTRACT [solid to subtract from] [solids to subtract]' },
+            { name: 'INTERSECT', shortcut: 'IN', description: 'Creates intersection solid', category: '3d', details: 'Creates a 3D solid from the common volume of selected solids.', usage: 'INTERSECT [select solids]' },
+            { name: 'SLICE', shortcut: 'SL', description: 'Slices 3D solids', category: '3d', details: 'Creates new 3D solids by slicing existing ones.', usage: 'SLICE [select] [cutting plane]' },
+            { name: 'SECTION', shortcut: 'SEC', description: 'Creates section plane', category: '3d', details: 'Creates a section object that acts as a cutting plane.', usage: 'SECTION [type] [placement]' },
+            { name: 'MESH', shortcut: 'MESH', description: 'Creates 3D mesh objects', category: '3d', details: 'Creates 3D mesh primitive objects.', usage: 'MESH [type] [parameters]' },
+
+            // View Commands
+            { name: 'ZOOM', shortcut: 'Z', description: 'Changes view magnification', category: 'view', details: 'Increases or decreases the magnification of the view.', usage: 'ZOOM [option]' },
+            { name: 'PAN', shortcut: 'P', description: 'Moves the view', category: 'view', details: 'Moves the view without changing magnification.', usage: 'PAN [direction]' },
+            { name: 'ORBIT', shortcut: '3DO', description: 'Rotates 3D view', category: 'view', details: 'Rotates the view in 3D space.', usage: '3DORBIT' },
+            { name: 'REGEN', shortcut: 'RE', description: 'Regenerates drawing', category: 'view', details: 'Regenerates the entire drawing from the current viewport.', usage: 'REGEN' },
+            { name: 'REDRAW', shortcut: 'R', description: 'Refreshes display', category: 'view', details: 'Refreshes the display in the current viewport.', usage: 'REDRAW' },
+            { name: 'VIEW', shortcut: 'V', description: 'Saves/restores views', category: 'view', details: 'Saves and restores named views.', usage: 'VIEW [option]' },
+            { name: 'VIEWCUBE', shortcut: 'CUBE', description: 'Shows ViewCube', category: 'view', details: 'Controls the visibility and properties of ViewCube.', usage: 'VIEWCUBE [on/off]' },
+            { name: 'VPORTS', shortcut: 'VPORTS', description: 'Creates viewports', category: 'view', details: 'Creates multiple viewports in model space.', usage: 'VPORTS [configuration]' },
+
+            // Dimension Commands
+            { name: 'DIMLINEAR', shortcut: 'DLI', description: 'Creates linear dimension', category: 'dimension', details: 'Creates horizontal or vertical linear dimensions.', usage: 'DIMLINEAR [first point] [second point] [dimension line location]' },
+            { name: 'DIMALIGNED', shortcut: 'DAL', description: 'Creates aligned dimension', category: 'dimension', details: 'Creates an aligned linear dimension.', usage: 'DIMALIGNED [first point] [second point] [dimension line location]' },
+            { name: 'DIMRADIUS', shortcut: 'DRA', description: 'Creates radius dimension', category: 'dimension', details: 'Creates a radius dimension for circles and arcs.', usage: 'DIMRADIUS [select arc or circle]' },
+            { name: 'DIMDIAMETER', shortcut: 'DDI', description: 'Creates diameter dimension', category: 'dimension', details: 'Creates a diameter dimension for circles and arcs.', usage: 'DIMDIAMETER [select arc or circle]' },
+            { name: 'DIMANGULAR', shortcut: 'DAN', description: 'Creates angular dimension', category: 'dimension', details: 'Creates an angular dimension.', usage: 'DIMANGULAR [select lines/arc]' },
+            { name: 'DIMCONTINUE', shortcut: 'DCO', description: 'Continues dimension', category: 'dimension', details: 'Creates a dimension that starts from an existing dimension.', usage: 'DIMCONTINUE [select dimension]' },
+            { name: 'DIMBASELINE', shortcut: 'DBA', description: 'Creates baseline dimensions', category: 'dimension', details: 'Creates multiple dimensions from the same baseline.', usage: 'DIMBASELINE [select dimension]' },
+            { name: 'QLEADER', shortcut: 'LE', description: 'Creates quick leader', category: 'dimension', details: 'Creates a leader and leader annotation.', usage: 'QLEADER [start point] [next point] [annotation]' },
+
+            // Layer Commands
+            { name: 'LAYER', shortcut: 'LA', description: 'Manages layers', category: 'layer', details: 'Creates and manages drawing layers.', usage: 'LAYER [option]' },
+            { name: 'LAYMCUR', shortcut: 'LAYMCUR', description: 'Changes to current layer', category: 'layer', details: 'Changes the layer of selected objects to the current layer.', usage: 'LAYMCUR [select objects]' },
+            { name: 'LAYISO', shortcut: 'LAYISO', description: 'Isolates layers', category: 'layer', details: 'Hides or locks all layers except selected.', usage: 'LAYISO [select objects]' },
+            { name: 'LAYUNISO', shortcut: 'LAYUNISO', description: 'Unisolates layers', category: 'layer', details: 'Restores all layers that were hidden or locked.', usage: 'LAYUNISO' },
+            { name: 'LAYOFF', shortcut: 'LAYOFF', description: 'Turns off layers', category: 'layer', details: 'Turns off the layer of selected objects.', usage: 'LAYOFF [select objects]' },
+            { name: 'LAYON', shortcut: 'LAYON', description: 'Turns on all layers', category: 'layer', details: 'Turns on all layers.', usage: 'LAYON' },
+            { name: 'LAYFRZ', shortcut: 'LAYFRZ', description: 'Freezes layers', category: 'layer', details: 'Freezes the layers of selected objects.', usage: 'LAYFRZ [select objects]' },
+            { name: 'LAYTHW', shortcut: 'LAYTHW', description: 'Thaws all layers', category: 'layer', details: 'Thaws all layers.', usage: 'LAYTHW' },
+
+            // Block Commands
+            { name: 'BLOCK', shortcut: 'B', description: 'Creates block definition', category: 'block', details: 'Creates a block definition from selected objects.', usage: 'BLOCK [name] [base point] [select objects]' },
+            { name: 'INSERT', shortcut: 'I', description: 'Inserts block', category: 'block', details: 'Places a block or drawing into the current drawing.', usage: 'INSERT [block name] [insertion point] [scale] [rotation]' },
+            { name: 'WBLOCK', shortcut: 'W', description: 'Writes block to file', category: 'block', details: 'Saves objects or converts a block to a specified drawing file.', usage: 'WBLOCK [filename] [block/objects]' },
+            { name: 'BEDIT', shortcut: 'BE', description: 'Block editor', category: 'block', details: 'Opens the Block Editor to create or edit block definitions.', usage: 'BEDIT [block name]' },
+            { name: 'BATTMAN', shortcut: 'BATTMAN', description: 'Manages attributes', category: 'block', details: 'Manages the attributes for a selected block definition.', usage: 'BATTMAN [select block]' },
+            { name: 'ATTEDIT', shortcut: 'ATE', description: 'Edits attributes', category: 'block', details: 'Changes attribute information in a block.', usage: 'ATTEDIT [select block]' },
+            { name: 'REFEDIT', shortcut: 'REFEDIT', description: 'Edits references', category: 'block', details: 'Edits a block or xref in-place.', usage: 'REFEDIT [select reference]' },
+
+            // Utility Commands
+            { name: 'MEASURE', shortcut: 'ME', description: 'Measures distance', category: 'utility', details: 'Measures the distance and angle between two points.', usage: 'MEASURE [first point] [second point]' },
+            { name: 'AREA', shortcut: 'AA', description: 'Calculates area', category: 'utility', details: 'Calculates the area and perimeter of objects or defined areas.', usage: 'AREA [select objects/points]' },
+            { name: 'LIST', shortcut: 'LI', description: 'Lists object data', category: 'utility', details: 'Displays property data for selected objects.', usage: 'LIST [select objects]' },
+            { name: 'PROPERTIES', shortcut: 'PR', description: 'Opens Properties palette', category: 'utility', details: 'Opens the Properties palette to view and modify object properties.', usage: 'PROPERTIES [select objects]' },
+            { name: 'QSELECT', shortcut: 'QS', description: 'Quick select', category: 'utility', details: 'Creates a selection set based on filtering criteria.', usage: 'QSELECT [criteria]' },
+            { name: 'PURGE', shortcut: 'PU', description: 'Removes unused items', category: 'utility', details: 'Removes unused named items from the drawing.', usage: 'PURGE [options]' },
+            { name: 'AUDIT', shortcut: 'AUDIT', description: 'Checks drawing integrity', category: 'utility', details: 'Evaluates the integrity of a drawing and corrects errors.', usage: 'AUDIT [Y/N]' },
+            { name: 'RECOVER', shortcut: 'RECOVER', description: 'Repairs damaged file', category: 'utility', details: 'Repairs and opens a damaged drawing file.', usage: 'RECOVER [filename]' },
+            { name: 'UNDO', shortcut: 'U', description: 'Reverses last action', category: 'utility', details: 'Reverses the effect of commands.', usage: 'UNDO [number/option]' },
+            { name: 'REDO', shortcut: 'REDO', description: 'Reverses undo', category: 'utility', details: 'Reverses the effects of UNDO.', usage: 'REDO' },
+            { name: 'OOPS', shortcut: 'OOPS', description: 'Restores erased objects', category: 'utility', details: 'Restores objects erased by the last ERASE command.', usage: 'OOPS' },
+
+            // Additional Essential Commands
+            { name: 'SAVE', shortcut: 'CTRL+S', description: 'Saves the drawing', category: 'utility', details: 'Saves the current drawing.', usage: 'SAVE' },
+            { name: 'SAVEAS', shortcut: 'SAVEAS', description: 'Saves with new name', category: 'utility', details: 'Saves the current drawing with a new name or location.', usage: 'SAVEAS [filename]' },
+            { name: 'OPEN', shortcut: 'CTRL+O', description: 'Opens a drawing', category: 'utility', details: 'Opens an existing drawing file.', usage: 'OPEN [filename]' },
+            { name: 'NEW', shortcut: 'CTRL+N', description: 'Creates new drawing', category: 'utility', details: 'Creates a new drawing.', usage: 'NEW [template]' },
+            { name: 'PLOT', shortcut: 'CTRL+P', description: 'Plots/prints drawing', category: 'utility', details: 'Plots a drawing to a plotter, printer, or file.', usage: 'PLOT' },
+            { name: 'PUBLISH', shortcut: 'PUBLISH', description: 'Publishes drawings', category: 'utility', details: 'Publishes drawings to DWF, DWFx, or PDF files.', usage: 'PUBLISH' },
+            { name: 'EXPORT', shortcut: 'EXP', description: 'Exports to other formats', category: 'utility', details: 'Saves objects to other file formats.', usage: 'EXPORT [format] [filename]' },
+            { name: 'IMPORT', shortcut: 'IMP', description: 'Imports from other formats', category: 'utility', details: 'Imports files from other formats.', usage: 'IMPORT [filename]' },
+            { name: 'OPTIONS', shortcut: 'OP', description: 'Opens Options dialog', category: 'utility', details: 'Customizes the AutoCAD settings.', usage: 'OPTIONS' },
+            { name: 'HELP', shortcut: 'F1', description: 'Opens Help', category: 'utility', details: 'Opens the AutoCAD Help window.', usage: 'HELP [topic]' }
+        ];
+
+        // Sound Effects
+        class SoundManager {
+            constructor() {
+                this.enabled = true;
+                this.audioContext = null;
+                this.sounds = {};
+                
+                try {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    this.initSounds();
+                } catch (e) {
+                    console.warn('Web Audio API not supported');
+                    this.enabled = false;
+                }
+            }
+
+            initSounds() {
+                // Click sound
+                this.sounds.click = () => {
+                    const oscillator = this.audioContext.createOscillator();
+                    const gainNode = this.audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(this.audioContext.destination);
+                    
+                    oscillator.frequency.setValueAtTime(800, this.audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(400, this.audioContext.currentTime + 0.1);
+                    
+                    gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
+                    
+                    oscillator.start(this.audioContext.currentTime);
+                    oscillator.stop(this.audioContext.currentTime + 0.1);
+                };
+
+                // Hover sound
+                this.sounds.hover = () => {
+                    const oscillator = this.audioContext.createOscillator();
+                    const gainNode = this.audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(this.audioContext.destination);
+                    
+                    oscillator.frequency.setValueAtTime(600, this.audioContext.currentTime);
+                    
+                    gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.05);
+                    
+                    oscillator.start(this.audioContext.currentTime);
+                    oscillator.stop(this.audioContext.currentTime + 0.05);
+                };
+
+                // Success sound
+                this.sounds.success = () => {
+                    const oscillator = this.audioContext.createOscillator();
+                    const gainNode = this.audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(this.audioContext.destination);
+                    
+                    oscillator.frequency.setValueAtTime(400, this.audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(600, this.audioContext.currentTime + 0.1);
+                    oscillator.frequency.setValueAtTime(800, this.audioContext.currentTime + 0.2);
+                    
+                    gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+                    
+                    oscillator.start(this.audioContext.currentTime);
+                    oscillator.stop(this.audioContext.currentTime + 0.3);
+                };
+            }
+
+            play(soundName) {
+                if (this.enabled && this.sounds[soundName]) {
+                    try {
+                        // Resume audio context if suspended
+                        if (this.audioContext.state === 'suspended') {
+                            this.audioContext.resume();
+                        }
+                        this.sounds[soundName]();
+                    } catch (e) {
+                        console.warn('Error playing sound:', e);
+                    }
+                }
+            }
+
+            toggle() {
+                this.enabled = !this.enabled;
+                return this.enabled;
+            }
+        }
+
+        // Initialize sound manager
+        const soundManager = new SoundManager();
+
+        // Three.js Scene Setup
+        let scene, camera, renderer, particles, mouseX = 0, mouseY = 0;
+
+        function initThreeJS() {
+            scene = new THREE.Scene();
+            
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 50;
+
+            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Create particles
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 2000;
+            const posArray = new Float32Array(particlesCount * 3);
+            
+            for (let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 100;
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.5,
+                color: 0x0066ff,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+            
+            particles = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particles);
+
+            // Add wireframe shapes
+            const shapes = [];
+            
+            // Cube
+            const cubeGeometry = new THREE.BoxGeometry(10, 10, 10);
+            const cubeMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0x0066ff, 
+                wireframe: true,
+                transparent: true,
+                opacity: 0.3
+            });
+            const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+            cube.position.set(-20, 0, 0);
+            shapes.push(cube);
+            scene.add(cube);
+
+            // Sphere
+            const sphereGeometry = new THREE.SphereGeometry(7, 16, 16);
+            const sphereMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0x4ecdc4, 
+                wireframe: true,
+                transparent: true,
+                opacity: 0.3
+            });
+            const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+            sphere.position.set(20, 0, 0);
+            shapes.push(sphere);
+            scene.add(sphere);
+
+            // Torus
+            const torusGeometry = new THREE.TorusGeometry(8, 3, 16, 32);
+            const torusMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0xff6b6b, 
+                wireframe: true,
+                transparent: true,
+                opacity: 0.3
+            });
+            const torus = new THREE.Mesh(torusGeometry, torusMaterial);
+            torus.position.set(0, 15, 0);
+            shapes.push(torus);
+            scene.add(torus);
+
+            // Mouse movement
+            document.addEventListener('mousemove', (event) => {
+                mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+            });
+
+            // Animation
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // Rotate particles
+                particles.rotation.y += 0.001;
+                particles.rotation.x += 0.0005;
+
+                // Mouse interaction
+                particles.rotation.y += mouseX * 0.001;
+                particles.rotation.x += mouseY * 0.001;
+
+                // Rotate shapes
+                shapes.forEach((shape, index) => {
+                    shape.rotation.x += 0.01 * (index + 1) * 0.3;
+                    shape.rotation.y += 0.01 * (index + 1) * 0.4;
+                });
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+            // Handle resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        // Update theme colors for Three.js
+        function updateThreeJSTheme(isDark) {
+            if (particles && particles.material) {
+                particles.material.color = new THREE.Color(isDark ? 0x0066ff : 0x0066ff);
+                particles.material.opacity = isDark ? 0.8 : 0.4;
+            }
+        }
+
+        // DOM Elements
+        const loadingScreen = document.getElementById('loadingScreen');
+        const searchInput = document.getElementById('searchInput');
+        const themeToggle = document.getElementById('themeToggle');
+        const soundToggle = document.getElementById('soundToggle');
+        const categoryFilters = document.getElementById('categoryFilters');
+        const commandsGrid = document.getElementById('commandsGrid');
+        const commandModal = document.getElementById('commandModal');
+        const modalClose = document.getElementById('modalClose');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const scrollTop = document.getElementById('scrollTop');
+        const helpBtn = document.getElementById('helpBtn');
+        const totalCommands = document.getElementById('totalCommands');
+
+        // State
+        let currentCategory = 'all';
+        let searchTerm = '';
+        let isDarkMode = true;
+
+        // Initialize
+        function init() {
+            initThreeJS();
+            renderCommands();
+            setupEventListeners();
+            updateStats();
+            
+            // Hide loading screen
+            setTimeout(() => {
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }, 1500);
+
+            // Setup scroll animations
+            setupScrollAnimations();
+        }
+
+        // Update statistics
+        function updateStats() {
+            totalCommands.textContent = commands.length;
+        }
+
+        // Render commands
+        function renderCommands() {
+            const filteredCommands = commands.filter(cmd => {
+                const matchesCategory = currentCategory === 'all' || cmd.category === currentCategory;
+                const matchesSearch = cmd.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                    cmd.shortcut.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                    cmd.description.toLowerCase().includes(searchTerm.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+            commandsGrid.innerHTML = '';
+
+            filteredCommands.forEach((cmd, index) => {
+                const card = createCommandCard(cmd);
+                card.style.animationDelay = `${index * 0.05}s`;
+                commandsGrid.appendChild(card);
+            });
+
+            // Re-apply scroll animations
+            setupScrollAnimations();
+        }
+
+        // Create command card
+        function createCommandCard(cmd) {
+            const card = document.createElement('div');
+            card.className = 'command-card scroll-animate';
+            card.innerHTML = `
+                <div class="command-header">
+                    <div class="command-name">${cmd.name}</div>
+                    <div class="command-shortcut">${cmd.shortcut}</div>
+                </div>
+                <div class="command-description">${cmd.description}</div>
+                <div class="command-category">${cmd.category}</div>
+            `;
+
+            card.addEventListener('click', () => {
+                soundManager.play('click');
+                showCommandDetails(cmd);
+            });
+
+            card.addEventListener('mouseenter', () => {
+                soundManager.play('hover');
+            });
+
+            return card;
+        }
+
+        // Show command details in modal
+        function showCommandDetails(cmd) {
+            modalTitle.textContent = cmd.name;
+            modalBody.innerHTML = `
+                <div class="modal-section">
+                    <h3>Shortcut</h3>
+                    <p>${cmd.shortcut}</p>
+                </div>
+                <div class="modal-section">
+                    <h3>Description</h3>
+                    <p>${cmd.description}</p>
+                </div>
+                <div class="modal-section">
+                    <h3>Details</h3>
+                    <p>${cmd.details}</p>
+                </div>
+                <div class="modal-section">
+                    <h3>Usage</h3>
+                    <div class="example-code">${cmd.usage}</div>
+                </div>
+                <div class="modal-section">
+                    <h3>Category</h3>
+                    <p>${cmd.category}</p>
+                </div>
+                <div class="modal-section">
+                    <h3>Tips</h3>
+                    <p>• Use ${cmd.shortcut} for quick access<br>
+                    • Press ESC to cancel the command<br>
+                    • Right-click for additional options</p>
+                </div>
+            `;
+            commandModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search
+            searchInput.addEventListener('input', (e) => {
+                searchTerm = e.target.value;
+                renderCommands();
+            });
+
+            // Category filters
+            categoryFilters.addEventListener('click', (e) => {
+                if (e.target.classList.contains('filter-btn')) {
+                    soundManager.play('click');
+                    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    currentCategory = e.target.dataset.category;
+                    renderCommands();
+                }
+            });
+
+            // Theme toggle
+            themeToggle.addEventListener('click', () => {
+                soundManager.play('click');
+                isDarkMode = !isDarkMode;
+                document.body.classList.toggle('light-mode');
+                themeToggle.textContent = isDarkMode ? '🌙' : '☀️';
+                updateThreeJSTheme(isDarkMode);
+            });
+
+            // Sound toggle
+            soundToggle.addEventListener('click', () => {
+                const enabled = soundManager.toggle();
+                soundToggle.textContent = enabled ? '🔊' : '🔇';
+                soundManager.play('click');
+            });
+
+            // Modal close
+            modalClose.addEventListener('click', () => {
+                soundManager.play('click');
+                commandModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+
+            // Click outside modal
+            commandModal.addEventListener('click', (e) => {
+                if (e.target === commandModal) {
+                    soundManager.play('click');
+                    commandModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+
+            // Scroll to top
+            scrollTop.addEventListener('click', () => {
+                soundManager.play('click');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // Help button
+            helpBtn.addEventListener('click', () => {
+                soundManager.play('click');
+                alert('AutoCAD Commands Cheat Sheet\n\n' +
+                      '• Click on any command card to see details\n' +
+                      '• Use the search bar to find specific commands\n' +
+                      '• Filter by category using the buttons\n' +
+                      '• Toggle theme with the moon/sun button\n' +
+                      '• Toggle sound with the speaker button\n\n' +
+                      'Keyboard Shortcuts:\n' +
+                      'ESC - Close modal\n' +
+                      'CTRL+F - Focus search');
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && commandModal.style.display === 'block') {
+                    soundManager.play('click');
+                    commandModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+                if (e.ctrlKey && e.key === 'f') {
+                    e.preventDefault();
+                    searchInput.focus();
+                }
+            });
+
+            // Touch events for mobile
+            let touchStartY = 0;
+            document.addEventListener('touchstart', (e) => {
+                touchStartY = e.touches[0].clientY;
+            });
+
+            document.addEventListener('touchmove', (e) => {
+                const touchY = e.touches[0].clientY;
+                const scrollThreshold = 100;
+                
+                if (touchStartY - touchY > scrollThreshold) {
+                    // Swipe up - can trigger an action
+                }
+            });
+        }
+
+        // Scroll animations
+        function setupScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            document.querySelectorAll('.scroll-animate').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // Particle effect on click
+        function createParticleEffect(x, y) {
+            const colors = ['#0066ff', '#ff6b6b', '#4ecdc4'];
+            const particleCount = 15;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.width = Math.random() * 8 + 4 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.setProperty('--tx', (Math.random() - 0.5) * 100 + 'px');
+                particle.style.setProperty('--ty', (Math.random() - 0.5) * 100 + 'px');
+                particle.style.animation = 'particle-animation 0.6s ease-out forwards';
+                
+                document.body.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 600);
+            }
+        }
+
+        // Add particle effect to clicks
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.command-card') && !e.target.closest('.btn')) {
+                createParticleEffect(e.clientX, e.clientY);
+            }
+        });
+
+        // Performance optimization
+        let ticking = false;
+        function requestTick() {
+            if (!ticking) {
+                requestAnimationFrame(updateAnimations);
+                ticking = true;
+            }
+        }
+
+        function updateAnimations() {
+            // Update any continuous animations here
+            ticking = false;
+        }
+
+        // Start the app
+        init();
+
+        // Progressive enhancement
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Register service worker for offline functionality
+                // navigator.serviceWorker.register('/sw.js');
+            });
+        }
+
+        // Smooth scroll polyfill for older browsers
+        if (!('scrollBehavior' in document.documentElement.style)) {
+            // Implement smooth scroll for older browsers
+            const smoothScroll = (target, duration) => {
+                const targetPosition = target.getBoundingClientRect().top;
+                const startPosition = window.pageYOffset;
+                let startTime = null;
+
+                function animation(currentTime) {
+                    if (startTime === null) startTime = currentTime;
+                    const timeElapsed = currentTime - startTime;
+                    const run = ease(timeElapsed, startPosition, targetPosition, duration);
+                    window.scrollTo(0, run);
+                    if (timeElapsed < duration) requestAnimationFrame(animation);
+                }
+
+                function ease(t, b, c, d) {
+                    t /= d / 2;
+                    if (t < 1) return c / 2 * t * t + b;
+                    t--;
+                    return -c / 2 * (t * (t - 2) - 1) + b;
+                }
+
+                requestAnimationFrame(animation);
+            };
+        }
+    </script>
+</body>
+</html>
